@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacker System</title>
+    <style>
+        body { background-color: black; color: lime; font-family: monospace; }
+        .container { margin: 50px; }
+        h1 { font-size: 24px; }
+        p { margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HACKER SYSTEM 0xBEEF</h1>
+        <p><strong>Timestamp:</strong> {{ data['timestamp'] }}</p>
+        <p><strong>Temperature:</strong> {{ data['temperature'] }}°C</p>
+        <p><strong>Humidity:</strong> {{ data['humidity'] }}%</p>
+        <p><strong>Latitude:</strong> {{ data['latitude'] }}</p>
+        <p><strong>Longitude:</strong> {{ data['longitude'] }}</p>
+        <p><strong>Mission Briefing:</strong> {{ data['mission'] }}</p>
+    </div>
+</body>
+</html>
