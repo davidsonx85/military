@@ -3,23 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hacker System</title>
+    <title>Tactical Dashboard</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
-        body { background-color: black; color: lime; font-family: monospace; }
-        .container { margin: 50px; }
-        h1 { font-size: 24px; }
-        p { margin: 10px 0; }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            height: 90%; /* Zwiększona wysokość kontenera */
+            background-color: #000;
+            border: 2px solid #444;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #map {
+            width: 60%; /* Zwiększenie szerokości mapy */
+            height: 75%; /* Zwiększenie wysokości mapy */
+            border: 1px solid #00ff00;
+        }
+
+        .radar {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            border: 2px solid #00ff00;
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        .status-bar {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            width: calc(100% - 20px);
+            height: 50px;
+            background-color: #333;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                height: 60%;
+            }
+
+            #map {
+                width: 90%;
+                height: 90%;
+            }
+
+            .radar {
+                width: 80px;
+                height: 80px;
+            }
+
+            .status-bar {
+                font-size: 12px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>HACKER SYSTEM 0xBEEF</h1>
-        <p><strong>Timestamp:</strong> {{ data['timestamp'] }}</p>
-        <p><strong>Temperature:</strong> {{ data['temperature'] }}°C</p>
-        <p><strong>Humidity:</strong> {{ data['humidity'] }}%</p>
-        <p><strong>Latitude:</strong> {{ data['latitude'] }}</p>
-        <p><strong>Longitude:</strong> {{ data['longitude'] }}</p>
-        <p><strong>Mission Briefing:</strong> {{ data['mission'] }}</p>
+        <div id="map"></div>
+        <div class="radar"></div>
+        <div class="status-bar">
+            <div id="latitude">Latitude: --</div>
+            <div id="longitude">Longitude: --</div>
+            <div id="altitude">Altitude: --</div>
+        </div>
     </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Inicjalizacja mapy
+        var map = L.map('map').setView([51.505, -0.09], 13); // Domyślna pozycja
+
+        // Dodanie warstwy mapy
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Geolokalizacja użytkownika
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var lat = position.coords.latitude;
+                var lon = position.coords.longitude;
+                var accuracy = position.coords.accuracy;
+
+                // Zaktualizowanie pozycji mapy i markera
+                map.setView([lat, lon], 13);
+                L.marker([lat, lon]).addTo(map)
+                    .bindPopup("You are here.").openPopup();
+
+                // Aktualizacja informacji o pozycji
+                document.getElementById('latitude').innerHTML = 'Latitude: ' + lat.toFixed(4);
+                document.getElementById('longitude').innerHTML = 'Longitude: ' + lon.toFixed(4);
+                document.getElementById('altitude').innerHTML = 'Accuracy: ' + accuracy + ' meters';
+            }, function() {
+                alert('Unable to retrieve your location');
+            });
+        } else {
+            alert('Geolocation is not supported by your browser');
+        }
+    </script>
 </body>
 </html>
