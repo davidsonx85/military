@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, jsonify, send_file
 import os
-import datetime
 
 app = Flask(__name__)
 
@@ -17,7 +16,8 @@ def index():
 @app.route('/load_missions', methods=['GET'])
 def load_missions():
     try:
-        with open(MISSION_FILE, 'r') as file:
+        # Otwórz plik z kodowaniem UTF-8
+        with open(MISSION_FILE, 'r', encoding='utf-8') as file:
             missions = file.read().splitlines()
         missions = [line for line in missions if line.strip() != '']
         return jsonify(missions)
@@ -29,7 +29,7 @@ def load_missions():
 def save_log():
     log_data = request.json.get('logData', '')
     try:
-        with open(LOG_FILE, 'a') as file:
+        with open(LOG_FILE, 'a', encoding='utf-8') as file:
             file.write(log_data + '\n')
         return jsonify({"message": "Log saved successfully!"}), 200
     except Exception as e:
@@ -38,7 +38,10 @@ def save_log():
 # Pobierz logi
 @app.route('/download_log')
 def download_log():
-    return send_file(LOG_FILE, as_attachment=True)
+    if os.path.exists(LOG_FILE):
+        return send_file(LOG_FILE, as_attachment=True)
+    else:
+        return jsonify({"error": "Log file does not exist."}), 404
 
 if __name__ == '__main__':
     app.run(debug=True)
