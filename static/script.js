@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let missionData = '';
     let currentMissionIndex = 0;
     let missionTasks = [];
+    let currentTimer; // Przechowuje aktualny timer
 
     loginButton.addEventListener('click', function() {
         const enteredPin = pinInput.value;
@@ -74,8 +75,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     timerDisplay.textContent = `${hours}:${minutes}:${secs}`;
                 }, 1000);
                 startButton.style.display = 'none';
-                stopButton.style.display = 'block';
-                endButton.style.display = 'block';
+                stopButton.style.display = 'inline-block';
+                endButton.style.display = 'inline-block';
             }
         });
 
@@ -84,7 +85,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 clearInterval(timer);
                 timer = null;
                 stopButton.style.display = 'none';
-                startButton.style.display = 'block';
+                startButton.style.display = 'inline-block';
+                currentTimer = timerDisplay.textContent; // Zapamiętaj aktualny czas
             }
         });
 
@@ -92,53 +94,54 @@ document.addEventListener('DOMContentLoaded', function() {
             if (timer) {
                 clearInterval(timer);
                 timer = null;
-                const endTime = new Date();
-                const duration = (endTime - startTime) / 1000; // Duration in seconds
-                const missionLog = `# MISSION ${index + 1} COMPLETED #\n` +
-                                   `# Timestamp: ${endTime.toLocaleString()} #\n` +
-                                   `# Duration: ${Math.floor(duration / 60)} minutes ${duration % 60} seconds #\n` +
-                                   `# Mission Description: "${taskText}" #\n` +
-                                   `--------------------------------------------\n`;
-                missionData += missionLog;
+            }
+            const endTime = new Date();
+            const duration = (endTime - startTime) / 1000; // Duration in seconds
+            const missionLog = `# MISSION ${index + 1} COMPLETED #\n` +
+                               `# Timestamp: ${endTime.toLocaleString()} #\n` +
+                               `# Duration: ${Math.floor(duration / 60)} minutes ${duration % 60} seconds #\n` +
+                               `# Mission Description: "${taskText}" #\n` +
+                               `--------------------------------------------\n`;
+            missionData += missionLog;
 
-                // Zapisz logi do serwera
-                fetch('/save_log', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ logData: missionData })
-                }).then(response => response.json())
-                  .then(data => console.log(data.message))
-                  .catch(error => console.error('Error saving log:', error));
+            // Zapisz logi do serwera
+            fetch('/save_log', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ logData: missionData })
+            }).then(response => response.json())
+              .then(data => console.log(data.message))
+              .catch(error => console.error('Error saving log:', error));
 
-                // Usuwanie zakończonej misji
-                missionListElement.innerHTML = ''; // Czyszczenie listy misji
+            // Usuwanie zakończonej misji
+            missionListElement.innerHTML = ''; // Czyszczenie listy misji
 
-                // Powiadomienie o rozpoczęciu następnej misji
-                if (currentMissionIndex < missionTasks.length - 1) {
-                    const nextMissionIndex = currentMissionIndex + 1;
-                    const nextMissionText = `Czy chcesz rozpocząć misję ${nextMissionIndex + 1}?`;
-                    notificationText.textContent = ''; // Czyszczenie poprzedniego tekstu powiadomienia
-                    typeWriter(nextMissionText, notificationText);
-                    notificationElement.style.display = 'block';
-                    yesButton.style.display = 'inline-block';
-                    noButton.style.display = 'inline-block';
+            // Powiadomienie o rozpoczęciu następnej misji
+            if (currentMissionIndex < missionTasks.length - 1) {
+                const nextMissionIndex = currentMissionIndex + 1;
+                const nextMissionText = `Czy chcesz rozpocząć misję ${nextMissionIndex + 1}?`;
+                notificationText.textContent = ''; // Czyszczenie poprzedniego tekstu powiadomienia
+                typeWriter(nextMissionText, notificationText);
+                notificationElement.style.display = 'block';
+                yesButton.style.display = 'inline-block';
+                noButton.style.display = 'inline-block';
 
-                    yesButton.onclick = function() {
-                        notificationElement.style.display = 'none';
-                        yesButton.style.display = 'none';
-                        noButton.style.display = 'none';
-                        currentMissionIndex++;
-                        showNextMission();
-                    };
+                yesButton.onclick = function() {
+                    notificationElement.style.display = 'none';
+                    yesButton.style.display = 'none';
+                    noButton.style.display = 'none';
+                    currentMissionIndex++;
+                    showNextMission();
+                };
 
-                    noButton.onclick = function() {
-                        notificationElement.style.display = 'none';
-                        yesButton.style.display = 'none';
-                        noButton.style.display = 'none';
-                    };
-                }
+                noButton.onclick = function() {
+                    notificationElement.style.display = 'none';
+                    yesButton.style.display = 'none';
+                    noButton.style.display = 'none';
+                    // Możesz dodać dodatkowe działania, gdy kliknięto "No"
+                };
             }
         });
     }
