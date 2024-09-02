@@ -1,0 +1,5 @@
+Misja 1: Przedostań się w wyznaczone miejsce aby zaznaczyć na kamieniu kierunki stron świata. Użyj kompasu. Upewnij się w poprawności zaznaczonego kierunku, będą one potrzebne do wykonania kolejnych misji.
+Misja 2: Sprawdź wszystkie urządzenia w laboratorium. Upewnij się, że są włączone i działają poprawnie.
+Misja 3: Skontaktuj się z agentem na miejscu. Uzyskaj informacje o aktualnej sytuacji.
+Misja 4: Wykonaj skanowanie terenu przy użyciu dostępnego sprzętu. Zanotuj wszelkie anomalie.
+Misja 5: Odszyfruj przesyłkę za pomocą kodu dostępu. Upewnij się, że wszystko jest w porządku przed dalszymi działaniami.
