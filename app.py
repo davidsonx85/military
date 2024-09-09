@@ -1,5 +1,8 @@
 from flask import Flask, render_template, request, jsonify, send_file
+import requests
 import os
+import datetime
+
 
 app = Flask(__name__)
 
@@ -7,10 +10,57 @@ app = Flask(__name__)
 MISSION_FILE = 'static/missions.txt'
 LOG_FILE = 'static/mission_log.txt'
 
-# Strona główna
+# Twój klucz API z OpenWeatherMap
+API_KEY = 'deb991d27f8d305ba2999cfc0df1e6fb'
+
+# Współrzędne dla lokalizacji
+LATITUDE = 53.5777237
+LONGITUDE = 18.3329858
+
+# Aktualna data i czas
+now = datetime.datetime.now()
+date = now.strftime("%Y-%m-%d")
+time = now.strftime("%H:%M")
+
+def get_weather_data(lat, lon):
+    url = f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API_KEY}&units=metric'
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+    return None
+
+def convert_unix_to_time(unix_timestamp):
+    return datetime.datetime.fromtimestamp(unix_timestamp).strftime('%H:%M')
+
 @app.route('/')
 def index():
-    return render_template('index.html')
+    # Pobierz dane pogodowe dla określonych współrzędnych
+    weather_data = get_weather_data(LATITUDE, LONGITUDE)
+
+    if weather_data:
+        temperature = weather_data['main']['temp']
+        pressure = weather_data['main']['pressure']
+        humidity = weather_data['main']['humidity']
+        wind_speed = weather_data['wind']['speed']
+        wind_direction = weather_data['wind']['deg']
+        sunrise = convert_unix_to_time(weather_data['sys']['sunrise'])
+        sunset = convert_unix_to_time(weather_data['sys']['sunset'])
+
+        # Przekaż dane do szablonu HTML
+        return render_template('index.html',
+                               date=date,
+                               time=time,
+                               temperature=temperature,
+                               pressure=pressure,
+                               humidity=humidity,
+                               wind_speed=wind_speed,
+                               wind_direction=wind_direction,
+                               sunrise=sunrise,
+                               sunset=sunset,
+                               latitude=LATITUDE,
+                               longitude=LONGITUDE)
+    else:
+        return "Nie udało się pobrać danych pogodowych.", 500
 
 # Wczytaj misje
 @app.route('/load_missions', methods=['GET'])
