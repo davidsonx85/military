@@ -74,6 +74,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     const secs = String(seconds % 60).padStart(2, '0');
                     timerDisplay.textContent = `${hours}:${minutes}:${secs}`;
                 }, 1000);
+
+
                 startButton.style.display = 'none';
                 stopButton.style.display = 'inline-block';
                 endButton.style.display = 'inline-block';
@@ -84,6 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (timer) {
                 clearInterval(timer);
                 timer = null;
+
                 stopButton.style.display = 'none';
                 startButton.style.display = 'inline-block';
                 currentTimer = timerDisplay.textContent; // Zapamiętaj aktualny czas

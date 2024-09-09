@@ -87,6 +87,62 @@ button:hover {
     display: block; /* Ustawienie zegara w nowej linii */
 }
 
+.weather-table {
+    width: 100%;
+    margin-bottom: 5px;
+    border-collapse: collapse;
+}
+
+.weather-table td {
+    padding: 1px;
+    text-align: left;
+}
+
+.weather-table td:first-child {
+    font-weight: bold;
+    width: 150px; /* Stała szerokość dla pierwszej kolumny */
+}
+
+/* Styl dla wierszy z wschodem i zachodem słońca */
+.weather-table .sun-info {
+    margin-top: 20px; /* Odstęp przed wschodem i zachodem słońca */
+}
+
+.blinker {
+    position: relative;
+    display: inline-block;
+    color: #00FF00;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 17px solid #00FF00;
+    margin-left: 10px;
+    animation: blink 1s infinite;
+}
+
+.blinker:before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: -10px;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 17px solid #00FF00;
+}
+
+@keyframes blink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}
+
+
 #timestamp, #clock {
     font-weight: bold;
     color: #00ff00;
