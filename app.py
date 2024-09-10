@@ -1,100 +1,47 @@
-from flask import Flask, render_template, request, jsonify, send_file
-import requests
-import os
-import datetime
-import pytz
-
+from flask import Flask, jsonify, render_template
+import serial
 
 app = Flask(__name__)
 
-# Ścieżki do plików
-MISSION_FILE = 'static/missions.txt'
-LOG_FILE = 'static/mission_log.txt'
-
-# Twój klucz API z OpenWeatherMap
-API_KEY = 'deb991d27f8d305ba2999cfc0df1e6fb'
-
-# Współrzędne dla lokalizacji
-LATITUDE = 53.5777237
-LONGITUDE = 18.3329858
-
-# Ustawienie strefy czasowej dla Twojej lokalizacji (np. Warszawa, Polska)
-timezone = pytz.timezone('Europe/Warsaw')
-# Aktualna data i czas
-now = datetime.datetime.now(timezone)
-date = now.strftime("%Y-%m-%d")
-time = now.strftime("%H:%M")
-
-def get_weather_data(lat, lon):
-    url = f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API_KEY}&units=metric'
-    response = requests.get(url)
-    if response.status_code == 200:
-        return response.json()
-    return None
-
-def convert_unix_to_time(unix_timestamp):
-    return datetime.datetime.fromtimestamp(unix_timestamp).strftime('%H:%M')
-
-@app.route('/')
-def index():
-    # Pobierz dane pogodowe dla określonych współrzędnych
-    weather_data = get_weather_data(LATITUDE, LONGITUDE)
-
-    if weather_data:
-        temperature = weather_data['main']['temp']
-        pressure = weather_data['main']['pressure']
-        humidity = weather_data['main']['humidity']
-        wind_speed = weather_data['wind']['speed']
-        wind_direction = weather_data['wind']['deg']
-        sunrise = convert_unix_to_time(weather_data['sys']['sunrise'])
-        sunset = convert_unix_to_time(weather_data['sys']['sunset'])
-
-        # Przekaż dane do szablonu HTML
-        return render_template('index.html',
-                               date=date,
-                               time=time,
-                               temperature=temperature,
-                               pressure=pressure,
-                               humidity=humidity,
-                               wind_speed=wind_speed,
-                               wind_direction=wind_direction,
-                               sunrise=sunrise,
-                               sunset=sunset,
-                               latitude=LATITUDE,
-                               longitude=LONGITUDE)
-    else:
-        return "Nie udało się pobrać danych pogodowych.", 500
-
-# Wczytaj misje
-@app.route('/load_missions', methods=['GET'])
-def load_missions():
+# Funkcja do parsowania danych GPS
+def get_satellites():
+    satellites = []
     try:
-        # Otwórz plik z kodowaniem UTF-8
-        with open(MISSION_FILE, 'r', encoding='utf-8') as file:
-            missions = file.read().splitlines()
-        missions = [line for line in missions if line.strip() != '']
-        return jsonify(missions)
+        with serial.Serial('/dev/ttyUSB0', baudrate=9600, timeout=1) as ser:
+            while True:
+                line = ser.readline().decode('ascii', errors='replace').strip()
+                if line.startswith('$GPGSV'):
+                    parts = line.split(',')
+                    satellites_in_view = int(parts[3])
+                    for i in range(4, len(parts) - 1, 4):
+                        try:
+                            sat_id = int(parts[i])
+                            elevation = int(parts[i+1])
+                            azimuth = int(parts[i+2])
+                            snr = int(parts[i+3]) if parts[i+3] else None
+                            satellites.append({
+                                'sat_id': sat_id,
+                                'elevation': elevation,
+                                'azimuth': azimuth,
+                                'snr': snr
+                            })
+                        except (IndexError, ValueError):
+                            continue
+                    break  # Wychodzimy po przetworzeniu jednego komunikatu GPGSV
     except Exception as e:
-        return str(e), 500
+        print(f"Błąd: {e}")
+    return satellites
 
-# Zapisz logi misji
-@app.route('/save_log', methods=['POST'])
-def save_log():
-    log_data = request.json.get('logData', '')
-    try:
-        with open(LOG_FILE, 'a', encoding='utf-8') as file:
-            file.write(log_data + '\n')
-        return jsonify({"message": "Log saved successfully!"}), 200
-    except Exception as e:
-        return str(e), 500
+# Trasa, która zwraca dane o satelitach
+@app.route('/get-satellites', methods=['GET'])
+def get_satellites_data():
+    sat_data = get_satellites()
+    return jsonify(sat_data)
 
-# Pobierz logi
-@app.route('/download_log')
-def download_log():
-    if os.path.exists(LOG_FILE):
-        return send_file(LOG_FILE, as_attachment=True)
-    else:
-        return jsonify({"error": "Log file does not exist."}), 404
+# Domyślna strona dla aplikacji, gdzie wstawiamy frontend GPS
+@app.route('/gps')
+def gps_page():
+    return render_template('gps.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
