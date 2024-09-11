@@ -43,9 +43,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const listItem = document.createElement('div');
         listItem.classList.add('mission-item');
         listItem.innerHTML = `
-            <!-- <span class="task-number">${index + 1}.</span> -->
-            <span class="task-number"></span>
+            <span class="static-brackets" id="left-bracket-${index}">[</span>
             <span id="blinker-${index}" class="blinker" style="display:none;">|</span>
+            <span class="static-brackets" id="right-bracket-${index}">]</span>
+            <span class="arrow" id="arrow-${index}">-></span>
             <label id="task-label-${index}" class="task-text"></label>
             <div class="task-controls">
                 <button class="start-button" id="start-${index}">Start</button>
@@ -60,6 +61,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const stopButton = listItem.querySelector(`#stop-${index}`);
         const endButton = listItem.querySelector(`#end-${index}`);
         const blinker = listItem.querySelector(`#blinker-${index}`);
+        const arrow = listItem.querySelector(`#arrow-${index}`);
+        const leftBracket = listItem.querySelector(`#left-bracket-${index}`);
+        const rightBracket = listItem.querySelector(`#right-bracket-${index}`);
 
         // Efekt typowania
         function typeWriter(text, element, i = 0) {
@@ -77,18 +81,37 @@ document.addEventListener('DOMContentLoaded', function() {
             stopButton.style.display = 'inline-block';
             endButton.style.display = 'inline-block';
 
-            // Pokaż i uruchom obrotowy blinker
+            // Pokaż blinker i uruchom obrót
             blinker.style.display = 'inline-block';
             blinker.classList.add('rotate-blinker');
+
+            // Zmień kolor nawiasów na niebieski
+            leftBracket.style.color = '#0000FF';
+            rightBracket.style.color = '#0000FF';
+
+            // Ukryj migający "->"
+            arrow.style.display = 'none';
         });
 
         stopButton.addEventListener('click', function() {
             stopButton.style.display = 'none';
             startButton.style.display = 'inline-block';
+
+            // Zatrzymaj obrót blinkera
+            blinker.classList.remove('rotate-blinker');
+            blinker.style.display = 'none';
+
+            // Zmień kolor nawiasów na czerwony
+            leftBracket.style.color = '#FF0000';
+            rightBracket.style.color = '#FF0000';
+
+            // Pokaż ponownie migający "->"
+            arrow.style.display = 'inline-block';
+            arrow.classList.add('arrow-blink'); // Dodaj klasę do migotania
         });
 
         endButton.addEventListener('click', function() {
-            // Ukryj blinker i zatrzymaj obroty
+            // Ukryj blinker i zatrzymaj obrót
             blinker.style.display = 'none';
             blinker.classList.remove('rotate-blinker');
 
