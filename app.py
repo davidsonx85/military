@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, jsonify, send_file
 import requests
 import os
 import datetime
-import pytz
 
 
 app = Flask(__name__)
@@ -18,10 +17,8 @@ API_KEY = 'deb991d27f8d305ba2999cfc0df1e6fb'
 LATITUDE = 53.5777237
 LONGITUDE = 18.3329858
 
-# Ustawienie strefy czasowej dla Twojej lokalizacji (np. Warszawa, Polska)
-timezone = pytz.timezone('Europe/Warsaw')
 # Aktualna data i czas
-now = datetime.datetime.now(timezone)
+now = datetime.datetime.now()
 date = now.strftime("%Y-%m-%d")
 time = now.strftime("%H:%M")
 
@@ -98,4 +95,3 @@ def download_log():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
