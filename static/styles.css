@@ -110,6 +110,16 @@ button:hover {
     margin-top: 20px; /* Odstęp przed wschodem i zachodem słońca */
 }
 
+
+.static-brackets {
+    color: inherit; /* Normal color initially */
+}
+
+.arrow {
+    color: inherit; /* Normal color initially */
+    font-weight: bold;
+}
+
 .rotate-blinker {
     display: inline-block;
     font-weight: bold;
@@ -122,6 +132,26 @@ button:hover {
     50% { opacity: 0.5; }
     100% { transform: rotate(360deg); opacity: 1; }
 }
+
+.brackets-start {
+    color: #0000FF; /* Blue color for brackets when blinking starts */
+}
+
+.brackets-end {
+    color: #FF0000; /* Red color for brackets when blinking ends */
+}
+
+.arrow-blink {
+    animation: blink 1s step-start infinite;
+    color: #FF0000; /* Red color for arrow while blinking */
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
 
 
 

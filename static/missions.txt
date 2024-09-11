@@ -1,3 +1,3 @@
--> 1: Zbadaj teren Zapora Żur.
--> 2: Dokonaj rozeznania odnośnie zniszczeń.
+1: Zbadaj teren Zapora Żur.
+2: Dokonaj rozeznania odnośnie zniszczeń.
 
