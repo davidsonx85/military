@@ -40,10 +40,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function typeTaskText(taskText, index) {
-        const listItem = document.createElement('li');
+        const listItem = document.createElement('div');
         listItem.classList.add('mission-item');
         listItem.innerHTML = `
-            <span class="task-number">${index + 1}.</span>
+            <!-- <span class="task-number">${index + 1}.</span> -->
+            <span class="task-number"></span>
             <span id="blinker-${index}" class="blinker" style="display:none;">|</span>
             <label id="task-label-${index}" class="task-text"></label>
             <div class="task-controls">
