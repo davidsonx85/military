@@ -62,6 +62,38 @@ def index():
     else:
         return "Nie udało się pobrać danych pogodowych.", 500
 
+# Dodaj nową trasę do zwracania danych pogodowych w formacie JSON
+@app.route('/get_weather', methods=['GET'])
+def get_weather():
+    # Pobierz dane pogodowe dla określonych współrzędnych
+    weather_data = get_weather_data(LATITUDE, LONGITUDE)
+
+    if weather_data:
+        temperature = weather_data['main']['temp']
+        pressure = weather_data['main']['pressure']
+        humidity = weather_data['main']['humidity']
+        wind_speed = weather_data['wind']['speed']
+        wind_direction = weather_data['wind']['deg']
+        sunrise = convert_unix_to_time(weather_data['sys']['sunrise'])
+        sunset = convert_unix_to_time(weather_data['sys']['sunset'])
+
+        # Zwróć dane pogodowe w formacie JSON
+        return jsonify({
+            'temperature': temperature,
+            'pressure': pressure,
+            'humidity': humidity,
+            'wind_speed': wind_speed,
+            'wind_direction': wind_direction,
+            'sunrise': sunrise,
+            'sunset': sunset,
+            'latitude': LATITUDE,
+            'longitude': LONGITUDE
+        })
+    else:
+        return jsonify({'error': 'Nie udało się pobrać danych pogodowych.'}), 500
+
+
+
 # Wczytaj misje
 @app.route('/load_missions', methods=['GET'])
 def load_missions():
