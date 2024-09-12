@@ -23,7 +23,7 @@ function addPoint(distanceInMeters, directionInDegrees) {
 // Funkcja do rysowania okręgów radaru
 function drawRadarCircles() {
     ctx.strokeStyle = '#00FF00';
-    ctx.lineWidth = 0.8;
+    ctx.lineWidth = 1;
     for (let i = 1; i <= 3; i++) {
         ctx.beginPath();
         ctx.arc(centerX, centerY, (radius / 3) * i, 0, 2 * Math.PI);
