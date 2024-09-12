@@ -6,6 +6,7 @@
     <title>Hacker System</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
 </head>
 <body>
 
@@ -77,6 +78,10 @@
             <p><strong>Lokalizacja:</strong><br><span id="lokalizacja"> {{ latitude }}, {{ longitude }}</span></strong></p>
         </div>
 
+        <div id="radar-container" style="text-align: center; margin-top: 20px;">
+            <canvas id="radarCanvas" width="300" height="300"></canvas>
+        </div>
+
         <p><strong>Twoje dzisiejsze misje:</strong></p>
 
         <div id="mission-list">
@@ -86,7 +91,7 @@
 
         <button id="download-log">Pobierz logi</button>
     </div>
-
+    <script src="{{ url_for('static', filename='radar.js') }}"></script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
