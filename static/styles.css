@@ -14,9 +14,12 @@ body {
     background-size: cover;
 }
 
+
+
 /* Stylizacja dla kontenera logowania */
 .login-container, .container {
     background-color: rgba(0, 0, 0, 0.8);
+    margin-top: 100px;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 15px rgba(0, 255, 0, 0.7);
