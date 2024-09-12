@@ -6,7 +6,6 @@
     <title>Hacker System</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-
 </head>
 <body>
 
@@ -29,67 +28,70 @@
         <div class="info-box">
             <!--<p><strong>Data:</strong><span id="date">{{ date }}</span><strong> Godzina:</strong><span id="time">{{ time }}</span></p>-->
 
-            <!-- Tabela z danymi pogodowymi -->
-
-            <table class="weather-table">
+        <table class="weather-table">
                 <tr>
                     <td><span id="date">Data: {{ date }}</span></td>
                     <td><b>Godzina: </b><span id="current-time"></span></td>
                 </tr>
-
-            </table>
+        </table>
             <td><span id="time_start">Czas systemu: {{ time }}</span></td><br>
-            <table class="weather-table">
-                <tr>
-                    <td><strong>Temperatura:</strong></td>
-                    <td><span id="temperature"></span>{{ temperature }} °C</td>
-                </tr></br>
-                <tr>
-                    <td><strong>Ciśnienie:</strong></td>
-                    <td><span id="pressure"></span>{{ pressure }} hPa</td>
-                </tr>
-                <tr>
-                    <td><strong>Wilgotność:</strong></td>
-                    <td><span id="humidity"></span>{{ humidity }} %</td>
-                </tr>
 
-                <tr>
-                    <td><strong>Wiatr:</strong></td>
-                    <td><span id="wiatr"></span>{{ wind_speed }} km/h</td>
-                </tr>
-                <tr>
-                    <td><strong>Kierunek:</strong></td>
-                    <td><span id="kierunek">{{ wind_direction }}°</span></td>
-                </tr>
+        <table class="weather-table">
+        <section id="weather">
+
+        <table class="weather-table">
+            <tr>
+                <td><strong>Czas aktualizacji: </strong></td>
+                <td><span id="update-time"><span id="last-updated"></span></td>
+            </tr></br>
+            <tr>
+                <td><strong>Temperatura:</strong></td>
+                <td><span id="temperature"></span></td>
+            </tr></br>
+            <tr>
+                <td><strong>Ciśnienie:</strong></td>
+                <td><span id="pressure"></span></td>
+            </tr>
+            <tr>
+                 <td><strong>Wilgotność:</strong></td>
+                 <td><span id="humidity"></span></td>
+            </tr>
+            <tr>
+                <td><strong>Wiatr:</strong></td>
+                <td><span id="wind-speed"></span></td>
+            </tr>
+            <tr>
+                <td><strong>Kierunek:</strong></td>
+                <td><span id="wind-direction"></span></td>
+            </tr>
                 <!-- Pusty wiersz jako odstęp -->
-                <tr  style="height: 10px;">
-                    <td colspan="2"></td>
-                </tr>
-                <tr>
-                    <td><strong>Wschód słońca:</strong></td>
-                    <td >{{ sunrise }}</td>
-                </tr>
-                <tr class="sun-info">
-                    <td><strong>Zachód słońca:</strong></td>
-                    <td>{{ sunset }}</td>
-                </tr>
-            </table>
+            <tr  style="height: 10px;">
+                <td colspan="2"></td>
+            </tr>
+            <tr>
+                <td><strong>Wschód słońca:</strong></td>
+                <td ><span id="sunrise"></span></td>
+            </tr>
+            <tr class="sun-info">
+                <td><strong>Zachód słońca:</strong></td>
+                <td ><span id="sunset"></span></td>
+            </tr>
+        </table>
 
+        </section>
             <p><strong>Lokalizacja:</strong><br><span id="lokalizacja"> {{ latitude }}, {{ longitude }}</span></strong></p>
-        </div>
-
+            </div>
         <div id="radar-container" style="text-align: center; margin-top: 20px;">
             <canvas id="radarCanvas" width="300" height="300"></canvas>
         </div>
-
         <p><strong>Twoje dzisiejsze misje:</strong></p>
 
         <div id="mission-list">
             <!-- Lista misji pojawi się tutaj -->
-
         </div>
 
-        <button id="download-log">Pobierz logi</button>
+        <button id="download-log" class="update-button">Pobierz logi misji ▼</button><button id="update-weather" class="update-button">Aktualizuj pogodę ↻</button>
+
     </div>
     <script src="{{ url_for('static', filename='radar.js') }}"></script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
