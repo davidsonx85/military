@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const loginContainer = document.querySelector('.login-container');
     const missionListElement = document.getElementById('mission-list');
     const downloadLogButton = document.getElementById('download-log');
-
     const updateButton = document.getElementById('update-weather');
     const lastUpdatedElement = document.getElementById('last-updated');
     const temperatureElement = document.getElementById('temperature');
@@ -21,6 +20,8 @@ document.addEventListener('DOMContentLoaded', function () {
     let missionData = '';
     let currentMissionIndex = 0;
     let missionTasks = [];
+    let startTimes = {}; // Przechowuje czasy rozpoczęcia dla każdej misji
+    let endTimes = {};   // Przechowuje czasy zakończenia dla każdej misji
 
     // Update time with seconds
     function updateTime() {
@@ -78,8 +79,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         typeWriter(taskText, label);
 
-        let isBlinking = false;
-
         startButton.addEventListener('click', function () {
             startButton.style.display = 'none';
             stopButton.style.display = 'inline-block';
@@ -89,6 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
             exclamation.style.display = 'none';
             leftBracket.style.color = '#0000FF'; // Ustaw kolor nawiasów na niebieski
             rightBracket.style.color = '#0000FF'; // Ustaw kolor nawiasów na niebieski
+            startTimes[index] = new Date(); // Zapisz czas rozpoczęcia
         });
 
         stopButton.addEventListener('click', function () {
@@ -105,9 +105,21 @@ document.addEventListener('DOMContentLoaded', function () {
         endButton.addEventListener('click', function () {
             blinker.style.display = 'none';
             exclamation.style.display = 'none';
-            const endTime = new Date();
+            endTimes[index] = new Date(); // Zapisz czas zakończenia
+
+            if (!startTimes[index]) {
+                alert('Mission must be started before ending.');
+                return;
+            }
+
+            const startTime = startTimes[index];
+            const endTime = endTimes[index];
+            const timeDiff = Math.round((endTime - startTime) / 60000); // Różnica w minutach
+
             const missionLog = `# MISSION ${index + 1} COMPLETED #\n` +
-                `# Timestamp: ${endTime.toLocaleString()} #\n` +
+                `# Start time: ${startTime.toLocaleString()} #\n` +
+                `# End time: ${endTime.toLocaleString()} #\n` +
+                `# Total time: ${timeDiff} minutes #\n` +
                 `# Mission Description: "${taskText}" #\n` +
                 `--------------------------------------------\n`;
             missionData += missionLog;
@@ -155,7 +167,27 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     downloadLogButton.addEventListener('click', function () {
-        window.location.href = '/download_log';
+        if (Object.keys(startTimes).length === 0 || Object.keys(endTimes).length === 0) {
+            alert('You must start and end at least one mission to download the report.');
+            return;
+        }
+
+        const reportContent = Object.keys(startTimes).map(index => {
+            const startTime = startTimes[index];
+            const endTime = endTimes[index];
+            const timeDiff = Math.round((endTime - startTime) / 60000); // Różnica w minutach
+            return `# MISSION ${parseInt(index) + 1} REPORT #\n` +
+                `# Start time: ${startTime.toLocaleString()} #\n` +
+                `# End time: ${endTime.toLocaleString()} #\n` +
+                `# Total time: ${timeDiff} minutes #\n` +
+                `--------------------------------------------\n`;
+        }).join('\n');
+
+        const blob = new Blob([reportContent], { type: 'text/plain' });
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = 'mission_report.txt';
+        link.click();
     });
 
     function updateWeather() {
