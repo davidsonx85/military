@@ -3,7 +3,6 @@ import requests
 import os
 import datetime
 
-
 app = Flask(__name__)
 
 # Ścieżki do plików
@@ -41,8 +40,15 @@ def index():
         temperature = weather_data['main']['temp']
         pressure = weather_data['main']['pressure']
         humidity = weather_data['main']['humidity']
+        temp_min = weather_data['main']['temp_min']
+        temp_max = weather_data['main']['temp_max']
+        sea_level = weather_data['main'].get('sea_level', 'N/A')
+        grnd_level = weather_data['main'].get('grnd_level', 'N/A')
         wind_speed = weather_data['wind']['speed']
         wind_direction = weather_data['wind']['deg']
+        clouds = weather_data['clouds']['all']
+        description = weather_data['weather'][0]['description']
+        icon = weather_data['weather'][0]['icon']
         sunrise = convert_unix_to_time(weather_data['sys']['sunrise'])
         sunset = convert_unix_to_time(weather_data['sys']['sunset'])
 
@@ -53,8 +59,15 @@ def index():
                                temperature=temperature,
                                pressure=pressure,
                                humidity=humidity,
+                               temp_min=temp_min,
+                               temp_max=temp_max,
+                               sea_level=sea_level,
+                               grnd_level=grnd_level,
                                wind_speed=wind_speed,
                                wind_direction=wind_direction,
+                               clouds=clouds,
+                               description=description,
+                               icon=icon,
                                sunrise=sunrise,
                                sunset=sunset,
                                latitude=LATITUDE,
@@ -72,8 +85,15 @@ def get_weather():
         temperature = weather_data['main']['temp']
         pressure = weather_data['main']['pressure']
         humidity = weather_data['main']['humidity']
+        temp_min = weather_data['main']['temp_min']
+        temp_max = weather_data['main']['temp_max']
+        sea_level = weather_data['main'].get('sea_level', 'N/A')
+        grnd_level = weather_data['main'].get('grnd_level', 'N/A')
         wind_speed = weather_data['wind']['speed']
         wind_direction = weather_data['wind']['deg']
+        clouds = weather_data['clouds']['all']
+        description = weather_data['weather'][0]['description']
+        icon = weather_data['weather'][0]['icon']
         sunrise = convert_unix_to_time(weather_data['sys']['sunrise'])
         sunset = convert_unix_to_time(weather_data['sys']['sunset'])
 
@@ -82,8 +102,15 @@ def get_weather():
             'temperature': temperature,
             'pressure': pressure,
             'humidity': humidity,
+            'temp_min': temp_min,
+            'temp_max': temp_max,
+            'sea_level': sea_level,
+            'grnd_level': grnd_level,
             'wind_speed': wind_speed,
             'wind_direction': wind_direction,
+            'clouds': clouds,
+            'description': description,
+            'icon': icon,
             'sunrise': sunrise,
             'sunset': sunset,
             'latitude': LATITUDE,
@@ -91,8 +118,6 @@ def get_weather():
         })
     else:
         return jsonify({'error': 'Nie udało się pobrać danych pogodowych.'}), 500
-
-
 
 # Wczytaj misje
 @app.route('/load_missions', methods=['GET'])
