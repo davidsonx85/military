@@ -31,8 +31,8 @@
                     <td><b>Godzina: </b><span id="current-time"></span></td>
                 </tr>
             </table>
-            <td><span id="time_start">Czas systemu: {{ time }}</span></td><br>
-
+            <td><span id="time_start">Czas systemu: {{ time }}</span></td>
+            <br><br>
             <section id="weather">
                 <table class="weather-table">
                     <tr>
@@ -58,6 +58,10 @@
                     <tr>
                         <td><strong>Kierunek:</strong></td>
                         <td><span id="wind-direction"></span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Chmury:</strong></td>
+                        <td><span id="clouds">{{ clouds }} %</span></td>
                     </tr>
                     <tr style="height: 10px;">
                         <td colspan="2"></td>
