@@ -36,7 +36,7 @@
             <section id="weather">
                 <table class="weather-table">
                     <tr>
-                        <td><strong>Czas aktualizacji: </strong></td>
+                        <td><strong>Aktualizacja: </strong></td>
                         <td><span id="last-updated"></span></td>
                     </tr>
                     <tr>
@@ -85,9 +85,13 @@
             <!-- Lista misji pojawi się tutaj -->
         </div>
 
-        <button id="download-log" class="update-button">Pobierz logi ▼</button>
-        <button id="update-weather" class="update-button">Aktualizuj ↻</button>
+        <div style="text-align: center; margin-top: 20px;">
+    <button id="download-log" class="update-button">Pobierz logi ▼</button>
+    <button id="update-weather" class="update-button">Aktualizuj ↻</button>
+</div>
     </div>
+
+
 
     <script src="{{ url_for('static', filename='radar.js') }}"></script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
