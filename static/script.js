@@ -8,11 +8,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const missionListElement = document.getElementById('mission-list');
     const downloadLogButton = document.getElementById('download-log');
 
-    const notificationElement = document.getElementById('notification');
-    const notificationText = document.getElementById('notification-text');
-    const yesButton = document.getElementById('yes-button');
-    const noButton = document.getElementById('no-button');
-
     const updateButton = document.getElementById('update-weather');
     const lastUpdatedElement = document.getElementById('last-updated');
     const temperatureElement = document.getElementById('temperature');
@@ -30,7 +25,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Update time with seconds
     function updateTime() {
         const now = new Date();
-        const dateString = now.toLocaleDateString();
         const timeString = now.toLocaleTimeString('en-GB');
         document.getElementById('current-time').textContent = `${timeString}`;
     }
@@ -42,6 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (enteredPin === correctPin) {
             loginContainer.style.display = 'none';
             container.style.display = 'block';
+            errorMessage.style.display = 'none'; // Ukryj komunikat o błędzie po poprawnym zalogowaniu
             loadMissions();
         } else {
             errorMessage.style.display = 'block';
@@ -54,8 +49,8 @@ document.addEventListener('DOMContentLoaded', function () {
         listItem.innerHTML = `
             <span class="static-brackets" id="left-bracket-${index}">[</span>
             <span id="blinker-${index}" class="blinker" style="display:none;">|</span>
+            <span id="exclamation-${index}" class="exclamation" style="display:none;">!</span>
             <span class="static-brackets" id="right-bracket-${index}">]</span>
-            <span class="arrow" id="arrow-${index}">-></span>
             <label id="task-label-${index}" class="task-text"></label>
             <div class="task-controls">
                 <button class="start-button" id="start-${index}">Start</button>
@@ -70,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const stopButton = listItem.querySelector(`#stop-${index}`);
         const endButton = listItem.querySelector(`#end-${index}`);
         const blinker = listItem.querySelector(`#blinker-${index}`);
-        const arrow = listItem.querySelector(`#arrow-${index}`);
+        const exclamation = listItem.querySelector(`#exclamation-${index}`);
         const leftBracket = listItem.querySelector(`#left-bracket-${index}`);
         const rightBracket = listItem.querySelector(`#right-bracket-${index}`);
 
@@ -83,15 +78,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
         typeWriter(taskText, label);
 
+        let isBlinking = false;
+
         startButton.addEventListener('click', function () {
             startButton.style.display = 'none';
             stopButton.style.display = 'inline-block';
             endButton.style.display = 'inline-block';
             blinker.style.display = 'inline-block';
             blinker.classList.add('rotate-blinker');
-            leftBracket.style.color = '#0000FF';
-            rightBracket.style.color = '#0000FF';
-            arrow.style.display = 'none';
+            exclamation.style.display = 'none';
+            leftBracket.style.color = '#0000FF'; // Ustaw kolor nawiasów na niebieski
+            rightBracket.style.color = '#0000FF'; // Ustaw kolor nawiasów na niebieski
         });
 
         stopButton.addEventListener('click', function () {
@@ -99,15 +96,15 @@ document.addEventListener('DOMContentLoaded', function () {
             startButton.style.display = 'inline-block';
             blinker.classList.remove('rotate-blinker');
             blinker.style.display = 'none';
-            leftBracket.style.color = '#FF0000';
-            rightBracket.style.color = '#FF0000';
-            arrow.style.display = 'inline-block';
-            arrow.classList.add('blink-arrow');
+            exclamation.style.display = 'inline-block';
+            exclamation.classList.add('blink-exclamation');
+            leftBracket.style.color = '#FF0000'; // Ustaw kolor nawiasów na czerwony
+            rightBracket.style.color = '#FF0000'; // Ustaw kolor nawiasów na czerwony
         });
 
         endButton.addEventListener('click', function () {
             blinker.style.display = 'none';
-            blinker.classList.remove('rotate-blinker');
+            exclamation.style.display = 'none';
             const endTime = new Date();
             const missionLog = `# MISSION ${index + 1} COMPLETED #\n` +
                 `# Timestamp: ${endTime.toLocaleString()} #\n` +
@@ -153,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .catch(error => {
                 console.error('Error loading missions:', error);
-                alert('Failed to load missions.');
+                missionListElement.innerHTML = '<p class="error-message">Failed to load missions. Try again later.</p>';
             });
     }
 
@@ -162,6 +159,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function updateWeather() {
+        updateButton.disabled = true; // Blokuj przycisk podczas pobierania danych
         fetch('/get_weather')
             .then(response => response.json())
             .then(data => {
@@ -183,14 +181,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
                 lastUpdatedElement.textContent = timeString;
             })
-            .catch(error => console.error('Error updating weather:', error));
+            .catch(error => console.error('Error updating weather:', error))
+            .finally(() => {
+                updateButton.disabled = false; // Odblokuj przycisk po zakończeniu
+            });
     }
 
     // Aktualizuj dane pogody po załadowaniu strony
     updateWeather();
 
     // Obsługuje kliknięcie przycisku aktualizacji pogody
-    updateButton.addEventListener('click', function() {
+    updateButton.addEventListener('click', function () {
         updateWeather();
     });
 });
