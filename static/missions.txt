@@ -1,3 +1,2 @@
-1: Zbadaj teren Zapora Żur.
-2: Dokonaj rozeznania odnośnie zniszczeń.
+Task: Przedostaje się rowerem na teren Zapory Żur. Zbadaj czy znajdują się tam ludzie. Jeśli będą zweryfikuj kim są i co tam robią. Następnie znajdź miejsce gdzie umieścisz grafikę kierunków stron świata i zaszyfrowany tekst. Powodzenia! 
 
