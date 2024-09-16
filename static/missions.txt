@@ -1,2 +1,4 @@
-Task: Przedostaje się rowerem na teren Zapory Żur. Zbadaj czy znajdują się tam ludzie. Jeśli będą zweryfikuj kim są i co tam robią. Następnie znajdź miejsce gdzie umieścisz grafikę kierunków stron świata i zaszyfrowany tekst. Powodzenia! 
-
+**Misja Hostage Rescue (Ratowanie zakładników)**:
+   - Cel: Zneutralizować zagrożenie i uratować zakładników.
+   - Wykorzystane przedmioty: Pistolet gazowy, paralizator, radio PMR.
+   - Opis: Użyj pistoletu gazowego do rozproszenia uwagi przeciwnika, a następnie paralizatora do unieszkodliwienia go. Komunikuj się z zespołem przez radio PMR.
