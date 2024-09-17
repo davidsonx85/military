@@ -44,9 +44,27 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    function typeWriter(text, element, i = 0) {
+        if (i < text.length) {
+            let currentChar = text.charAt(i);
+
+            // Zamiana na odpowiednie znaczniki HTML dla nowej linii i spacji
+            if (currentChar === '\n') {
+                element.innerHTML += '<br>';
+            } else if (currentChar === ' ' && text.charAt(i - 1) === ' ') {
+                element.innerHTML += '&nbsp;';
+            } else {
+                element.innerHTML += currentChar;
+            }
+
+            setTimeout(() => typeWriter(text, element, i + 1), 50);
+        }
+    }
+
     function typeTaskText(taskText, index) {
         const listItem = document.createElement('div');
         listItem.classList.add('mission-item');
+
         listItem.innerHTML = `
             <span class="static-brackets" id="left-bracket-${index}">[</span>
             <span id="blinker-${index}" class="blinker" style="display:none;">|</span>
@@ -70,13 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const leftBracket = listItem.querySelector(`#left-bracket-${index}`);
         const rightBracket = listItem.querySelector(`#right-bracket-${index}`);
 
-        function typeWriter(text, element, i = 0) {
-            if (i < text.length) {
-                element.textContent += text.charAt(i);
-                setTimeout(() => typeWriter(text, element, i + 1), 50);
-            }
-        }
-
+        // Wywołaj typeWriter do wyświetlenia misji litera po literze
         typeWriter(taskText, label);
 
         startButton.addEventListener('click', function () {
@@ -86,8 +98,8 @@ document.addEventListener('DOMContentLoaded', function () {
             blinker.style.display = 'inline-block';
             blinker.classList.add('rotate-blinker');
             exclamation.style.display = 'none';
-            leftBracket.style.color = '#0000FF'; // Ustaw kolor nawiasów na niebieski
-            rightBracket.style.color = '#0000FF'; // Ustaw kolor nawiasów na niebieski
+            leftBracket.style.color = '#0000FF';
+            rightBracket.style.color = '#0000FF';
             startTimes[index] = new Date(); // Zapisz czas rozpoczęcia
         });
 
@@ -98,8 +110,8 @@ document.addEventListener('DOMContentLoaded', function () {
             blinker.style.display = 'none';
             exclamation.style.display = 'inline-block';
             exclamation.classList.add('blink-exclamation');
-            leftBracket.style.color = '#FF0000'; // Ustaw kolor nawiasów na czerwony
-            rightBracket.style.color = '#FF0000'; // Ustaw kolor nawiasów na czerwony
+            leftBracket.style.color = '#FF0000';
+            rightBracket.style.color = '#FF0000';
         });
 
         endButton.addEventListener('click', function () {
@@ -150,6 +162,7 @@ document.addEventListener('DOMContentLoaded', function () {
             typeTaskText(taskText, currentMissionIndex);
         }
     }
+
 
     function loadMissions() {
         fetch('/load_missions')

@@ -1,4 +1,6 @@
-**Misja Hostage Rescue (Ratowanie zakładników)**:
+**Misja Hostage Rescue (Ratowanie zakładników):
    - Cel: Zneutralizować zagrożenie i uratować zakładników.
    - Wykorzystane przedmioty: Pistolet gazowy, paralizator, radio PMR.
    - Opis: Użyj pistoletu gazowego do rozproszenia uwagi przeciwnika, a następnie paralizatora do unieszkodliwienia go. Komunikuj się z zespołem przez radio PMR.
+**Misja 2: Balck Fog:
+	- zweryfikuj
