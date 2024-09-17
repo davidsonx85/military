@@ -125,8 +125,12 @@ def load_missions():
     try:
         # Otwórz plik z kodowaniem UTF-8
         with open(MISSION_FILE, 'r', encoding='utf-8') as file:
-            missions = file.read().splitlines()
-        missions = [line for line in missions if line.strip() != '']
+            content = file.read()
+
+        # Podziel misje na podstawie znaku '**'
+        missions = content.split('**')
+        missions = [mission.strip() for mission in missions if mission.strip() != '']
+
         return jsonify(missions)
     except Exception as e:
         return str(e), 500
