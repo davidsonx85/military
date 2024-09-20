@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, jsonify, send_file
 import requests
 import os
 import datetime
+import random
+from geopy.distance import geodesic
 
 app = Flask(__name__)
 
@@ -13,8 +15,8 @@ LOG_FILE = 'static/mission_log.txt'
 API_KEY = 'deb991d27f8d305ba2999cfc0df1e6fb'
 
 # Współrzędne dla lokalizacji
-LATITUDE = 53.5777237
-LONGITUDE = 18.3329858
+BASE_LATITUDE = 53.572449890836545
+BASE_LONGITUDE = 18.32984286725182
 
 # Aktualna data i czas
 now = datetime.datetime.now()
@@ -31,10 +33,20 @@ def get_weather_data(lat, lon):
 def convert_unix_to_time(unix_timestamp):
     return datetime.datetime.fromtimestamp(unix_timestamp).strftime('%H:%M')
 
+def generate_random_coordinates(lat, lon, radius):
+    # Funkcja generuje losowe współrzędne w promieniu `radius` od punktu (lat, lon)
+    radius_km = radius / 1000  # Convert meters to kilometers
+    random_angle = random.uniform(0, 360)  # Random direction
+    random_radius = random.uniform(0, radius_km)  # Random distance in km
+    new_location = geodesic(kilometers=random_radius).destination((lat, lon), random_angle)
+
+    return new_location.latitude, new_location.longitude
+    #return new_lat, new_lon
+
 @app.route('/')
 def index():
     # Pobierz dane pogodowe dla określonych współrzędnych
-    weather_data = get_weather_data(LATITUDE, LONGITUDE)
+    weather_data = get_weather_data(BASE_LATITUDE, BASE_LONGITUDE)
 
     if weather_data:
         temperature = weather_data['main']['temp']
@@ -51,6 +63,9 @@ def index():
         icon = weather_data['weather'][0]['icon']
         sunrise = convert_unix_to_time(weather_data['sys']['sunrise'])
         sunset = convert_unix_to_time(weather_data['sys']['sunset'])
+
+        # Generowanie współrzędnych dla lokalizacji
+        lat_location, lon_location = generate_random_coordinates(BASE_LATITUDE, BASE_LONGITUDE, 2000)
 
         # Przekaż dane do szablonu HTML
         return render_template('index.html',
@@ -70,8 +85,8 @@ def index():
                                icon=icon,
                                sunrise=sunrise,
                                sunset=sunset,
-                               latitude=LATITUDE,
-                               longitude=LONGITUDE)
+                               latitude=lat_location,
+                               longitude=lon_location)
     else:
         return "Nie udało się pobrać danych pogodowych.", 500
 
@@ -79,7 +94,7 @@ def index():
 @app.route('/get_weather', methods=['GET'])
 def get_weather():
     # Pobierz dane pogodowe dla określonych współrzędnych
-    weather_data = get_weather_data(LATITUDE, LONGITUDE)
+    weather_data = get_weather_data(BASE_LATITUDE, BASE_LONGITUDE)
 
     if weather_data:
         temperature = weather_data['main']['temp']
@@ -97,6 +112,9 @@ def get_weather():
         sunrise = convert_unix_to_time(weather_data['sys']['sunrise'])
         sunset = convert_unix_to_time(weather_data['sys']['sunset'])
 
+        # Generowanie współrzędnych dla lokalizacji
+        lat_location, lon_location = generate_random_coordinates(BASE_LATITUDE, BASE_LONGITUDE, 2000)
+
         # Zwróć dane pogodowe w formacie JSON
         return jsonify({
             'temperature': temperature,
@@ -113,11 +131,20 @@ def get_weather():
             'icon': icon,
             'sunrise': sunrise,
             'sunset': sunset,
-            'latitude': LATITUDE,
-            'longitude': LONGITUDE
+            'latitude': lat_location,
+            'longitude': lon_location
         })
     else:
         return jsonify({'error': 'Nie udało się pobrać danych pogodowych.'}), 500
+
+@app.route('/get_coordinates', methods=['GET'])
+def get_coordinates():
+    # Generowanie współrzędnych dla lokalizacji
+    lat_location, lon_location = generate_random_coordinates(BASE_LATITUDE, BASE_LONGITUDE, 2000)
+    return jsonify({
+        'latitude': lat_location,
+        'longitude': lon_location
+    })
 
 # Wczytaj misje
 @app.route('/load_missions', methods=['GET'])
