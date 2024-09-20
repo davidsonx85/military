@@ -77,17 +77,21 @@
                 </table>
             </section>
 
-            <p><strong>Lokalizacja:</strong><br><span id="lokalizacja"> {{ latitude }}, {{ longitude }}</span></p>
+            <!-- <p><strong>Lokalizacja:</strong><br><span id="lokalizacja"> {{ latitude }}, {{ longitude }}</span></p> -->
+            <p><strong>Lokalizacja:</strong><br><span id="latA">N/A</span>, <span id="lonA">N/A</span></p>
         </div>
 
         <div id="radar-container" style="text-align: center; margin-top: 20px;">
             <canvas id="radarCanvas" width="300" height="300"></canvas>
+
+
         </div>
 
         <p><strong>Twoje dzisiejsze misje:</strong></p>
         <div id="mission-list">
             <!-- Lista misji pojawi się tutaj -->
         </div>
+
 
         <div style="text-align: center; margin-top: 20px;">
     <button id="download-log" class="update-button">Pobierz logi ▼</button>
