@@ -8,7 +8,7 @@ const radius = Math.min(centerX, centerY) - 20;
 
 let animationRadius = 0;  // Zmienna dla animowanego okręgu
 let isTargetOutOfBounds = false;  // Flaga, czy cel przekroczył maxDistance
-const maxDistance = 2000; // Maksymalna odległość w metrach
+const maxDistance = 4000; // Maksymalna odległość w metrach
 
 // Przechowuje dane punktów
 const points = [];
@@ -110,7 +110,6 @@ function animateRadar() {
 
     // Zmiana koloru animowanego okręgu na czerwony, jeśli punkt przekroczył maxDistance
     if (isTargetOutOfBounds) {
-        ctx.stroke
         ctx.strokeStyle = '#FF0000'; // Czerwony
     } else {
         ctx.strokeStyle = '#00FF00'; // Zielony
@@ -133,26 +132,46 @@ function animateRadar() {
     requestAnimationFrame(animateRadar);
 }
 
-// Dodaj punkty do radaru
-// Punkt A: 0,0 zawsze w środku 53.56508066681356, 18.334472220112147 | 53.56602227701458, 18.35406004439499
-const latA = 53.56508066681356, lonA = 18.334472220112147; // Punkt A (twoja lokalizacja)
-const latB = 53.5670543245811, lonB = 18.313067303394597; // Punkt B (cel B) 53.5670543245811, 18.313067303394597
-const latC = 53.56298320320954, lonC = 18.355913378305743; // Punkt C (cel C)
+// Funkcja do pobierania współrzędnych z serwera
+async function fetchCoordinates() {
+    try {
+        const response = await fetch('/get_coordinates');
+        const data = await response.json();
 
-// Obliczanie dystansu i azymutu dla punktu B
-const distanceB = haversineDistance(latA, lonA, latB, lonB); // Dystans w metrach dla punktu B
-const azimuthB = calculateAzimuth(latA, lonA, latB, lonB);   // Kierunek w stopniach dla punktu B
+        const latA = data.latitude;
+        const lonA = data.longitude;
 
-// Obliczanie dystansu i azymutu dla punktu C
-const distanceC = haversineDistance(latA, lonA, latC, lonC); // Dystans w metrach dla punktu C
-const azimuthC = calculateAzimuth(latA, lonA, latC, lonC);   // Kierunek w stopniach dla punktu C
+        // Wyświetlanie współrzędnych punktu A
+        document.getElementById('latA').textContent = latA;  // Zaokrąglone do 6 miejsc po przecinku
+        document.getElementById('lonA').textContent = lonA;
 
-// Dodaj punkty B i C na radarze
-addPoint(distanceB, azimuthB, 'Paradisus'); // Punkt B
-addPoint(distanceC, azimuthC, 'Home'); // Punkt C
+        // Przykładowe punkty B i C - możesz je również pobierać z serwera
+        const latB = 53.5670543245811;
+        const lonB = 18.313067303394597;
+        const latC = 53.56298320320954;
+        const lonC = 18.355913378305743;
 
-// Inicjalizacja animacji
-animateRadar();
+        // Obliczanie dystansu i azymutu dla punktu B
+        const distanceB = haversineDistance(latA, lonA, latB, lonB); // Dystans w metrach dla punktu B
+        const azimuthB = calculateAzimuth(latA, lonA, latB, lonB);   // Kierunek w stopniach dla punktu B
+
+        // Obliczanie dystansu i azymutu dla punktu C
+        const distanceC = haversineDistance(latA, lonA, latC, lonC); // Dystans w metrach dla punktu C
+        const azimuthC = calculateAzimuth(latA, lonA, latC, lonC);   // Kierunek w stopniach dla punktu C
+
+        // Dodaj punkty B i C na radarze
+        addPoint(distanceB, azimuthB, 'Paradisus'); // Punkt B
+        addPoint(distanceC, azimuthC, 'Home'); // Punkt C
+
+        // Inicjalizacja animacji
+        animateRadar();
+    } catch (error) {
+        console.error('Error fetching coordinates:', error);
+    }
+}
+
+// Rozpocznij pobieranie współrzędnych i rysowanie radaru
+fetchCoordinates();
 
 // Funkcja obliczająca dystans
 function haversineDistance(lat1, lon1, lat2, lon2) {
@@ -180,8 +199,8 @@ function calculateAzimuth(lat1, lon1, lat2, lon2) {
     const y = Math.sin(Δλ) * Math.cos(φ2);
     const x = Math.cos(φ1) * Math.sin(φ2) -
               Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
-    const θ = Math.atan2(y, x);
 
-    const azimuth = (θ * 180 / Math.PI + 360) % 360;  // Zamiana na stopnie i zakres 0-360
+    let azimuth = Math.atan2(y, x) * 180 / Math.PI;
+    azimuth = (azimuth + 360) % 360;  // Zamiana na stopnie i zakres 0-360
     return azimuth;
 }
